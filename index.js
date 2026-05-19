@@ -3,7 +3,7 @@ dns.setServers(["8.8.8.8", "8.8.4.4"]);
 
 const express = require('express');
 const dotenv = require('dotenv')
-const cors=require("cors");
+const cors = require("cors");
 
 
 const { MongoClient, ServerApiVersion } = require('mongodb');
@@ -41,13 +41,17 @@ async function run() {
 
 
     // sending add card data to database
-    app.post('/addCar', async  (req, res) => {
+    app.post('/cars', async (req, res) => {
       const cars = req.body;
       const result = await addCarCollection.insertOne(cars)
       res.json(result)
     })
 
-
+    // Getting car data for Explore Cars page from databse
+    app.get('/cars', async (req, res) => {
+      const result = await addCarCollection.find().toArray();
+      res.json(result)
+    })
 
 
 
