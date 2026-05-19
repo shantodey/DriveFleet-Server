@@ -38,6 +38,7 @@ async function run() {
 
     // Making different collections on the database to store different data
     const addCarCollection = db.collection("cars")
+    const bookingCars = db.collection("bookcar")
 
 
     // sending add card data to database
@@ -61,6 +62,15 @@ async function run() {
       res.json(result)
     });
 
+
+    // adding Booking Cars data to database
+    app.post('/booking', async (req, res) => {
+      const bookscar = req.body;
+      const result = await bookingCars.insertOne(bookscar)
+      res.json(result)
+      console.log(result);
+
+    })
 
 
 
