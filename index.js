@@ -73,6 +73,13 @@ async function run() {
     })
 
 
+    // getting Booking card data form database who is booking
+    app.get('/booking/:userId', async (req, res) => {
+      const { userId } = req.params;
+      const result = await bookingCars.find({ userId: userId }).toArray();
+      res.json(result)
+    })
+
 
 
     await client.db("admin").command({ ping: 1 });
