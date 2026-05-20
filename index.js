@@ -50,10 +50,31 @@ async function run() {
 
     // Getting car data for Explore Cars page from databse
     app.get('/cars', async (req, res) => {
-      const result = await addCarCollection.find().toArray();
-      res.json(result)
-    })
+      const { q, t } = req.query;
+      let filter = {};
+      if (q) {
+        filter.carName = {
+          $regex: q,
+          $options: 'i'
+        };
+      }
 
+      if (t) {
+        filter.carType = {
+          $regex: t,
+          $options: 'i'
+        };
+      }
+      try {
+        const result = await addCarCollection.find(filter).toArray();
+        res.json(result);
+      } catch (error) {
+        res.status(500).json({ message: "Error fetching cars", error });
+      }
+    });
+
+
+    // 
 
     // Getting Individual card data 
     app.get('/cars/:id', async (req, res) => {
