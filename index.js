@@ -81,6 +81,13 @@ async function run() {
     })
 
 
+    // api for delete booking card that user has added in data base
+    app.delete('/booking/:id', async (req, res) => {
+      const { id } = req.params;
+      const result = await bookingCars.deleteOne({ _id: new ObjectId(id) })
+      res.json(result)
+    })
+
 
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
