@@ -34,26 +34,26 @@ const client = new MongoClient(uri, {
 
 // verify token for user data 
 const JWKS = createRemoteJWKSet(
-    new URL(`${process.env.CLIENT_URL}/api/auth/jwks`)
+  new URL(`${process.env.CLIENT_URL}/api/auth/jwks`)
 )
 const verifyToken = async (req, res, next) => {
-    const authHeader = req?.headers.authorization;
-    if (!authHeader) {
-        return res.status(401).json({ massage: " Unauthorized" })
-    }
-    const token = authHeader.split(" ")[1];
-    if (!token) {
-        return res.status(401).json({ massage: " Unauthorized" })
-    }
-    try{
-        const { payload } = await jwtVerify(token,JWKS)
-        console.log(payload);
-         next()
-    }catch{
-        return res.status(403).json({ massage: " Forbidden" })
-    }
-    
-   
+  const authHeader = req?.headers.authorization;
+  if (!authHeader) {
+    return res.status(401).json({ massage: " Unauthorized" })
+  }
+  const token = authHeader.split(" ")[1];
+  if (!token) {
+    return res.status(401).json({ massage: " Unauthorized" })
+  }
+  try {
+    const { payload } = await jwtVerify(token, JWKS)
+    console.log(payload);
+    next()
+  } catch {
+    return res.status(403).json({ massage: " Forbidden" })
+  }
+
+
 }
 
 async function run() {
@@ -104,7 +104,7 @@ async function run() {
     // 
 
     // Getting Individual card data 
-    app.get('/cars/:id',verifyToken, async (req, res,next) => {
+    app.get('/cars/:id', verifyToken, async (req, res, next) => {
       const { id } = req.params;
       const result = await addCarCollection.findOne({ _id: new ObjectId(id) })
       res.json(result)
@@ -136,6 +136,18 @@ async function run() {
       res.json(result)
     })
 
+
+
+    app.get('/my-added-cars/:ownerId', async (req, res) => {
+      const { ownerId } = req.params;
+      try {
+        const query = { ownerId: ownerId };
+        const result = await addCarCollection.find(query).toArray();
+        res.json(result);
+      } catch (error) {
+        res.status(500).json({ message: "Error fetching your cars", error });
+      }
+    });
 
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
