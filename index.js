@@ -58,7 +58,7 @@ const verifyToken = async (req, res, next) => {
 
 async function run() {
   try {
-    // await client.connect();
+    await client.connect();
     // creating a Database to stor the data 
     const db = client.db("DriveFleet")
 
@@ -149,7 +149,43 @@ async function run() {
       }
     });
 
-    // await client.db("admin").command({ ping: 1 });
+
+    // Editing individual car data who have added a new car 
+    app.patch('/my-added-cars/:id', async (req, res) => {
+      const { id } = req.params;
+      const updatedData = req.body;
+
+      const result = await addCarCollection.updateOne(
+        { _id: new ObjectId(id) },
+        { $set: updatedData }
+      );
+
+      res.json(result);
+    });
+
+
+
+
+    // Delete individual car
+    app.delete('/my-added-cars/:id', async (req, res) => {
+      const { id } = req.params;
+
+      try {
+        const result = await addCarCollection.deleteOne({
+          _id: new ObjectId(id)
+        });
+
+        res.json(result);
+
+      } catch (error) {
+        res.status(500).json({
+          message: "Failed to delete car",
+          error
+        });
+      }
+    });
+
+    await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
 
